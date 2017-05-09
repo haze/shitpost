@@ -7,17 +7,16 @@ import requests
 DANGO_ENPOINT = 'https://emoji.getdango.com/api/emoji'
 
 def get_relevant_emojis(x):
-	r = requests.get(DANGO_ENPOINT, params={'q':x})
-	return r.json()['results']
+	return requests.get(DANGO_ENPOINT, params={'q':x}).json()['results']
 
 def emojify(x):
 	relevant = get_relevant_emojis(x)
 	if relevant[0]['score'] < 0.012:
 		return x
 	if x.endswith('.'):
-		return x[:len(x)-1] + " " + ' '.join(list(map(lambda x: x['text'], get_relevant_emojis(x)[:randint(1, 3)]))) + '. '
+		return x[:len(x)-1] + " " + ' '.join(list(map(lambda x: x['text'], relevant[:randint(args.min_emojis, args.max_emojis)]))) + '. '
 	else:
-		return x + " " + ' '.join(list(map(lambda x: x['text'], get_relevant_emojis(x)[:randint(1, 3)]))) + ' '
+		return x + " " + ' '.join(list(map(lambda x: x['text'], relevant[:randint(args.min_emojis, args.max_emojis)]))) + ' '
 
 def split_by_random(base, char, a, e):
 	buff = []
@@ -59,7 +58,7 @@ if args.max_emojis > 10 or args.max_emojis < 1:
 	print('max emojis invalid range! valid: [1-10].')
 	exit(1)
 
-split_base = split_by_random(base, ' ', args.min_emojis, args.max_emojis)
+split_base = split_by_random(base, ' ', args.min_words, args.max_words)
 executor = concurrent.futures.ProcessPoolExecutor(len(split_base))
 futures = [executor.submit(emojify, section) for section in split_base]
 concurrent.futures.wait(futures)
