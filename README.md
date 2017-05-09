@@ -1,7 +1,7 @@
 
 # shitpost.py
 
-example: `shitpost i could kill for some sushi right about now...`
+![example of shitpost.py](res/showcase.png)
 
 to install use the included script: `./install.sh`
 

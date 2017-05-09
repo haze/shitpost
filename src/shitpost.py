@@ -1,3 +1,4 @@
+import argparse
 import sys
 from random import randint
 import requests
@@ -27,10 +28,27 @@ def split_by_random(base, char, a, e):
 		b = b[to:]
 	return buff
 
-base = ' '.join(sys.argv[1:])
+# main
+parser = argparse.ArgumentParser()
+parser.add_argument('text', nargs='*',type=str, help='text to intersperse.')
+parser.add_argument('-mi', '--min-emojis', default=2, type=int, help='minimum amount of emojis to be interspersed.')
+parser.add_argument('-ma', '--max-emojis', default=3, type=int, help='maximum amount of emojis to be interspersed.')
+args = parser.parse_args() 
+
+base = ' '.join(args.text)
 if not base:
 	print('no input found.')
 	exit(1)
 
-split_base = split_by_random(base, ' ', 1, 3)
+if args.min_emojis < 1 or args.min_emojis > 10:
+	print('min emojis valid range [1-10]')
+	exit(1)
+
+if args.max_emojis > 10 or args.max_emojis < 1:
+	print('max emojis valid range [1-10].')
+	exit(1)
+
+
+
+split_base = split_by_random(base, ' ', args.min_emojis, args.max_emojis)
 print(' '.join(list(map(emojify, split_base))))
